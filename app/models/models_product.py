@@ -1,12 +1,12 @@
 from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field, Relationship
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from models.models_bom import Bom
-    from models.models_user import WorkUnit, User
-    from models.models_material import Material
+    from app.models.models_bom import Bom
+    from app.models.models_user import WorkUnit, User
+    from app.models.models_material import Material
     
 class OrderStatus(str, Enum):
     PENDING = "pending"
@@ -37,9 +37,9 @@ class ProductionOrder(SQLModel, table = True):
     started_at : datetime | None = Field(default = None)
     completed_at : datetime | None = Field(default = None)
     work_unit_id : int | None = Field(default = None, foreign_key = "work_unit.id")
-    work_unit : "WorkUnit | None" = Relationship(back_populates = "production_orders")
+    work_unit : Optional["WorkUnit"] = Relationship(back_populates = "production_orders")
     created_by_id : int | None = Field(default = None, foreign_key = "user.id")
-    created_by : "User | None" = Relationship(back_populates = "production_orders")
+    created_by : Optional["User"] = Relationship(back_populates = "production_orders")
     consumptions : list["ProductionConsumption"] = Relationship(back_populates = "production_order")
     
 class ProductionConsumption(SQLModel, table = True):

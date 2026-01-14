@@ -1,0 +1,8 @@
+{% block content %}
+    <h3>Operator Panel</h3>
+    <p>Welcome, {{ current_user.email }}! Here you can manage your operator tasks.</p>
+    <ul>
+        <li><a href="/dashboard/operator/tasks">View Tasks</a></li>
+        <li><a href="/dashboard/operator/reports">Generate Reports</a></li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,11 @@
+<div id="message-container" hx-swap-oob="true">
+    {% if success %}
+        <ins style="display: block; padding: 1rem; border-radius: 8px;">
+            ✅ {{ message }}
+        </ins>
+    {% else %}
+        <mark style="display: block; padding: 1rem; border-radius: 8px;">
+            ❌ {{ message }}
+        </mark>
+    {% endif %}
+</div>

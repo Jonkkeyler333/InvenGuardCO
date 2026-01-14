@@ -1,0 +1,41 @@
+<div id="users-table">
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <nav>
+    {% if page > 1 %}
+    <a hx-get="/users/list?page={{ page - 1 }}"
+       hx-target="#users-table"
+       hx-swap="innerHTML">
+        ⬅️ Back
+    </a>
+    {% endif %}
+    
+    <span>Page {{ page }} of {{ total_pages }}</span>
+    
+    {% if page < total_pages %}
+    <a hx-get="/users/list?page={{ page + 1 }}"
+       hx-target="#users-table"
+       hx-swap="innerHTML">
+        Next ➡️
+    </a>
+    {% endif %}
+</nav>
+</div>

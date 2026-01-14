@@ -1,0 +1,35 @@
+{# Fragmento parcial del formulario de login para HTMX #}
+{# Este template se usa para respuestas HTMX sin recargar toda la página #}
+
+{% if error %}
+    <div id="login-error" class="error-message" style="color: red; margin-bottom: 10px;">
+        {{ error }}
+    </div>
+{% endif %}
+
+<form id="login-form"
+      hx-post="/auth/login"
+      hx-target="#login-container"
+      hx-swap="innerHTML"
+      hx-indicator="#login-spinner">
+    
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required 
+               value="{{ email if email else '' }}">
+    </div>
+    
+    <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    
+    <div>
+        <button type="submit">
+            Login
+        </button>
+        <span id="login-spinner" class="htmx-indicator" style="display: none;">
+            Cargando...
+        </span>
+    </div>
+</form>

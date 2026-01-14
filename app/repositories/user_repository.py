@@ -1,5 +1,7 @@
 from app.models.models_user import User, WorkUnit, UserRole
-from sqlmodel import Session, select 
+from sqlmodel import Session, select, func, col
+from math import ceil
+from typing import Tuple
 
 class UserRepository:
     def __init__(self, session: Session):
@@ -21,10 +23,13 @@ class UserRepository:
         user = self.session.get(User, user_id)
         return user
     
-    def get_all_users(self) -> list[User]:
-        statement = select(User)
+    def get_all_users(self, page : int = 1, limit: int = 10) -> Tuple[list[User], int]:
+        offset = (page - 1) * limit
+        statement = select(User).offset(offset).limit(limit)
         results = self.session.exec(statement).all()
-        return list(results)
+        total = self.session.exec(select(func.count(col(User.id)))).one()
+        total_pages = ceil(total / limit)
+        return list(results), total_pages
     
     def update_user(self, user_id: int,**kwargs) -> User | None:
         user = self.session.get(User, user_id)

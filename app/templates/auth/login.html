@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Login - InvenGuardCO{% endblock %}
+
+{% block content %}
+    <h2>Login</h2>
+    
+    {# Contenedor principal que HTMX actualizará #}
+    <div id="login-container">
+        
+        {# Mensaje de error (si existe) #}
+        {% if error %}
+            <div id="login-error" class="error-message" style="color: red; margin-bottom: 10px;">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        {# 
+            FORMULARIO CON HTMX
+            ==================
+            hx-post      → Hace una petición POST a /auth/login cuando se envía el form
+            hx-target    → El elemento que se actualizará con la respuesta (#login-container)
+            hx-swap      → Cómo insertar el contenido (innerHTML = reemplaza contenido interno)
+            hx-indicator → Elemento a mostrar mientras carga (#login-spinner)
+        #}
+        <form id="login-form"
+              hx-post="/auth/login"
+              hx-target="#login-container"
+              hx-swap="innerHTML"
+              hx-indicator="#login-spinner">
+            
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div>
+                <button type="submit">
+                    Login
+                </button>
+                {# Indicador de carga - HTMX lo muestra/oculta automáticamente #}
+                <span id="login-spinner" class="htmx-indicator" style="display: none;">
+                    Cargando...
+                </span>
+            </div>
+        </form>
+    </div>
+    <a href="/">home</a>
+{% endblock %}

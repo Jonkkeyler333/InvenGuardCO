@@ -12,3 +12,4 @@ email-validator
 python-jose
 argon2-cffi
 email-validator
+jinja2

@@ -1,11 +1,11 @@
 from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field, Relationship
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
-    from models.models_user import User
-    from models.models_bom import BomItem
-    from models.models_product import ProductionConsumption
+    from app.models.models_user import User
+    from app.models.models_bom import BomItem
+    from app.models.models_product import ProductionConsumption
 
 class Material(SQLModel, table = True):
     __tablename__ = "material" # type: ignore

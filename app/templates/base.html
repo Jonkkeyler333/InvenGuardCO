@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}InvenGuardCO{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <style>
+        /* ==========================================
+           ESTILOS HTMX
+           ==========================================
+           .htmx-indicator: Elemento oculto por defecto
+           .htmx-request .htmx-indicator: Se muestra cuando HTMX hace una petición
+        */
+        .htmx-indicator {
+            display: none;
+        }
+        .htmx-request .htmx-indicator {
+            display: inline;
+        }
+        .htmx-request.htmx-indicator {
+            display: inline;
+        }
+        
+        /* Mensaje de error */
+        .error-message {
+            color: red;
+            padding: 10px;
+            border: 1px solid red;
+            border-radius: 4px;
+            background-color: #ffe6e6;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    {% block content %}{% endblock %}
+    <footer>
+        <p>&copy; 2025 InvenGuardCO. All rights reserved.</p>
+    </footer>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.js" integrity="sha384-ezjq8118wdwdRMj+nX4bevEi+cDLTbhLAeFF688VK8tPDGeLUe0WoY2MZtSla72F" crossorigin="anonymous"></script>
+</html>

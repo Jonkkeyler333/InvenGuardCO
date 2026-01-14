@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Register - InvenGuardCO{% endblock %}
+
+{% block content %}
+<main class="container"> 
+    <header>
+            <h2>Register New User</h2>
+    </header>
+    <article id="register-container"> 
+        {% if error %}
+            <div class="error-message" role="alert" style="color: red; padding: 10px; border: 1px solid red; border-radius: 4px; margin-bottom: 15px;">
+                ⚠️ {{ error }}
+            </div>
+        {% endif %}
+        {% if success %}
+            <div class="success-message" role="alert" style="color: green; padding: 10px; border: 1px solid green; border-radius: 4px; margin-bottom: 15px;">
+                ✅ {{ success }}
+            </div>
+        {% endif %}
+        <form id="register-form"
+              hx-post="/users/create"
+              hx-target="#register-container"
+              hx-swap="innerHTML">
+            
+            <div class="grid"> 
+                <div>
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="John Doe" required>
+                </div>
+                <div>
+                    <label for="email">Email address</label>
+                    <input type="text" id="email" name="email" placeholder="email@example.com" required>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div>
+                    <label for="role">User Role</label>
+                    <select id="role" name="role" required>
+                        <option value="" selected>Select role...</option>
+                        <option value="operator">Operator</option>
+                        <option value="clerk">Clerk</option>
+                        <option value="supervisor">Supervisor</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn">
+                Register
+            </button>
+
+            <span id="register-spinner" class="htmx-indicator" aria-busy="true">
+                Processing registration...
+            </span>
+        </form>
+    </article>
+    <a href="/users">Back management users</a>
+</main>
+{% endblock %}

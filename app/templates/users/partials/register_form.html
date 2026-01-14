@@ -1,0 +1,54 @@
+{# Mensaje de error (si existe) #}
+{% if error %}
+    <div class="error-message" role="alert" style="color: red; padding: 10px; border: 1px solid red; border-radius: 4px; margin-bottom: 15px;">
+        ⚠️ {{ error }}
+    </div>
+{% endif %}
+
+{# Mensaje de éxito (si existe) #}
+{% if success %}
+    <div class="success-message" role="alert" style="color: green; padding: 10px; border: 1px solid green; border-radius: 4px; margin-bottom: 15px;">
+        ✅ {{ success }}
+    </div>
+{% endif %}
+
+<form id="register-form"
+    hx-post="/users/create"
+    hx-target="#register-container"
+    hx-swap="innerHTML"
+    hx-indicator="#register-spinner">
+    <div class="grid">
+        <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="John Doe" value="{{ name if name else '' }}" required>
+        </div>
+        <div>
+            <label for="email">Email address</label>
+            <input type="text" id="email" name="email" placeholder="email@example.com" value="{{ email if email else '' }}" required>
+        </div>
+    </div>
+
+    <div class="grid">
+        <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <label for="role">User Role</label>
+            <select id="role" name="role" required>
+                <option value="" selected>Select role...</option>
+                <option value="operator">Operator</option>
+                <option value="clerk">Clerk</option>
+                <option value="supervisor">Supervisor</option>
+            </select>
+        </div>
+    </div>
+
+    <button type="submit" id="submit-btn">
+        Register
+    </button>
+
+    <span id="register-spinner" class="htmx-indicator" aria-busy="true">
+        Processing registration...
+    </span>
+</form>

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+    <h2>Welcome to the Dashboard</h2>
+    <p>This is your main dashboard where you can monitor key metrics and access various features.</p>
+    <p>User: {{ current_user.name }}</p>
+    {% include "dashboard/partials/" ~ current_user.role.value ~ "_panel.html" %}
+    <a href="/auth/logout">Logout</a>
+{% endblock %}

@@ -2,12 +2,28 @@
 {% block title %}Manage Users - InvenGuardCO{% endblock %}
 
 {% block content %}
+<main class="container"> 
+    <header>
     <h2>Manage Users</h2>
+    </header>
     <div id="users-table"
         hx-get="/users/list?page=1"
-        hx-trigger="load">
+        hx-trigger="load, userDeleted from:body">
         Loading users...
     </div>
-    <a href="/users/create">Register new user</a>
-    <a href="/dashboard">Back to Dashboard</a>
+    <a href="/users/create" role="button">👦🏽👩🏽 Register new user</a>
+    <a href="/dashboard" role="button">⬅️Back to Dashboard</a>
+    <div id="modal" class="modal" style="display:none;">
+    <dialog open>
+        <article>
+        <header>
+            <h3>Edit User</h3>
+            <button aria-label="Close" onclick="document.getElementById('modal').style.display='none';" class="close"></button>
+        </header>
+        <div id="modal-content">
+        </div>
+        </article>
+    </dialog>
+    </div>
+</main>
 {% endblock %}

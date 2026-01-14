@@ -46,6 +46,7 @@ class UserUpdate(BaseModel):
     email : EmailStr | None
     role : str | None
     is_active : bool | None
+    password : str | None
     model_config = ConfigDict(from_attributes = True)
     
 class UserLogin(BaseModel):

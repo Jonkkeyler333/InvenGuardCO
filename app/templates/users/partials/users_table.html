@@ -1,20 +1,43 @@
 <div id="users-table">
-    <table>
+    <table class="striped">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {% for user in users %}
+            {% for user in users if user.id != current_user.id %}
             <tr>
                 <td>{{ user.id }}</td>
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.role }}</td>
+                <td>{{ "✅ Active" if user.is_active else "❌ Inactive" }}</td>
+                <td>
+                    <div role="group">
+                        <button
+                            hx-get="/users/{{ user.id }}/edit"
+                            hx-target="#modal-content"
+                            hx-swap="innerHTML"
+                            onclick="document.getElementById('modal').style.display='block'"
+                            >
+                            ✍️ Edit
+                        </button>
+                        <button class="secondary" 
+                            hx-delete="/users/{{ user.id }}" 
+                            hx-target="#users-table" 
+                            hx-swap="innerHTML" 
+                            hx-confirm="¿Estás seguro de eliminar a {{ user.name }}? Esta acción no se puede deshacer."
+                            >
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </td>
             </tr>
             {% endfor %}
         </tbody>

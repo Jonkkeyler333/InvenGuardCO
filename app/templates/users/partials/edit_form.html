@@ -1,0 +1,48 @@
+{% if error %}
+    <div class="error-message" style="color: red; margin-bottom: 10px;">
+    ⚠️ {{ error }}
+    </div>
+{% endif %}
+{% if success %}
+    <div class="success-message" style="color: green; margin-bottom: 10px;">
+        ✅ {{ success }}
+    </div>
+{% endif %} 
+<form id="edit-user-form"
+      hx-post="/users/{{ user.id }}/edit"
+      hx-target="#modal-content"
+      hx-swap="innerHTML">
+    <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" value="{{ user.name }}" required>
+    </div>
+    <div>
+        <label for="email">Email address</label>
+        <input type="email" id="email" name="email" value="{{ user.email }}" required>
+    </div>
+    <div>
+        <label for="role">User Role</label>
+        <select id="role" name="role" required>
+            <option value="operator" {{ 'selected' if user.role == 'operator' else '' }}>Operator</option>
+            <option value="clerk" {{ 'selected' if user.role == 'clerk' else '' }}>Clerk</option>
+            <option value="supervisor" {{ 'selected' if user.role == 'supervisor' else '' }}>Supervisor</option>
+        </select>
+    </div>
+    <div>
+        <label for="is_active">Active</label>
+        <input type="checkbox" id="is_active" name="is_active" value="true" {% if user.is_active %}checked{% endif %}>
+    </div>
+    <div>
+        <label for="password">New Password (leave blank to keep current)</label>
+        <input type="password" id="password" name="password">
+    </div>
+    <div>
+        <button type="submit"
+                hx-disable="true"
+                hx-indicator="#loading-indicator">
+            Save
+        </button>
+        <button type="button" onclick="document.getElementById('modal').style.display='none'; htmx.ajax('GET', '/users/list?page=1', {target: '#users-table', swap: 'outerHTML'});">⬅️ Back</button>
+    </div>
+
+</form>

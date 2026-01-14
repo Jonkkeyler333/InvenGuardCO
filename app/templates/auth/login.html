@@ -1,53 +1,73 @@
 {% extends "base.html" %}
 {% block title %}Login - InvenGuardCO{% endblock %}
-
 {% block content %}
-    <h2>Login</h2>
-    
-    {# Contenedor principal que HTMX actualizará #}
-    <div id="login-container">
+    <main class="container">
+        <article style="max-width: 400px; margin: 2rem auto;">
+            <header>
+                <h2>Hey 👋🏽</h2>
+                <h3>Please log in to your account</h3>
+            </header>
+            <div id="login-container">
+                {% if error %}
+                    <div id="login-error" role="alert" style="margin-bottom: 1rem;">
+                        {{ error }}
+                    </div>
+                {% endif %}
+                <form id="login-form"
+                      hx-post="/auth/login"
+                      hx-target="#login-container"
+                      hx-swap="innerHTML"
+                      hx-indicator="#login-spinner">
+                    
+                    <label>
+                        Email
+                        <input type="text" 
+                               id="email" 
+                               name="email" 
+                               placeholder="tu@email.com"
+                               required
+                               >
+                    </label>
+                    
+                    <label>
+                        Contraseña
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               placeholder="••••••••"
+                               required
+                               autocomplete="current-password">
+                    </label>
+                    
+                    <button type="submit" aria-busy="false">
+                        Login
+                        <span id="login-spinner" 
+                              class="htmx-indicator" 
+                              style="display: none; margin-left: 0.5rem;">
+                            ⏳
+                        </span>
+                    </button>
+                </form>
+            </div>
+            
+            <footer style="text-align: center; margin-top: 1.5rem;">
+                <small>
+                    <a href="/">← Back to Home</a>
+                </small>
+            </footer>
+        </article>
+    </main>
+    <script>
+        document.body.addEventListener('htmx:beforeRequest', function(evt) {
+            if (evt.detail.elt.id === 'login-form') {
+                document.querySelector('button[type="submit"]').setAttribute('aria-busy', 'true');
+            }
+        });
         
-        {# Mensaje de error (si existe) #}
-        {% if error %}
-            <div id="login-error" class="error-message" style="color: red; margin-bottom: 10px;">
-                {{ error }}
-            </div>
-        {% endif %}
-
-        {# 
-            FORMULARIO CON HTMX
-            ==================
-            hx-post      → Hace una petición POST a /auth/login cuando se envía el form
-            hx-target    → El elemento que se actualizará con la respuesta (#login-container)
-            hx-swap      → Cómo insertar el contenido (innerHTML = reemplaza contenido interno)
-            hx-indicator → Elemento a mostrar mientras carga (#login-spinner)
-        #}
-        <form id="login-form"
-              hx-post="/auth/login"
-              hx-target="#login-container"
-              hx-swap="innerHTML"
-              hx-indicator="#login-spinner">
-            
-            <div>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            
-            <div>
-                <button type="submit">
-                    Login
-                </button>
-                {# Indicador de carga - HTMX lo muestra/oculta automáticamente #}
-                <span id="login-spinner" class="htmx-indicator" style="display: none;">
-                    Cargando...
-                </span>
-            </div>
-        </form>
-    </div>
-    <a href="/">home</a>
+        document.body.addEventListener('htmx:afterRequest', function(evt) {
+            if (evt.detail.elt.id === 'login-form') {
+                document.querySelector('button[type="submit"]').setAttribute('aria-busy', 'false');
+            }
+        });
+    </script>
 {% endblock %}

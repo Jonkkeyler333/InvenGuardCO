@@ -25,3 +25,10 @@ class UserAlreadyExistsError(AppException):
             message=f"User with email '{email}' already exists",
             status_code=409
         )
+        
+class UserNotFoundError(AppException):
+    def __init__(self, user_id: int):
+        super().__init__(
+            message=f"User with ID '{user_id}' not found",
+            status_code=404
+        )

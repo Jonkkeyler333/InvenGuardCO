@@ -25,7 +25,7 @@ class UserRepository:
     
     def get_all_users(self, page : int = 1, limit: int = 10) -> Tuple[list[User], int]:
         offset = (page - 1) * limit
-        statement = select(User).offset(offset).limit(limit)
+        statement = select(User).offset(offset).limit(limit).order_by(col(User.id))
         results = self.session.exec(statement).all()
         total = self.session.exec(select(func.count(col(User.id)))).one()
         total_pages = ceil(total / limit)
@@ -41,3 +41,11 @@ class UserRepository:
         self.session.commit()
         self.session.refresh(user)
         return user        
+    
+    def delete_user(self, user_id: int) -> bool:
+        user = self.session.get(User, user_id)
+        if not user:
+            return False
+        self.session.delete(user)
+        self.session.commit()
+        return True

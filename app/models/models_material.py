@@ -1,16 +1,24 @@
 from datetime import datetime, timezone
 from sqlmodel import SQLModel, Field, Relationship
 from typing import TYPE_CHECKING, Optional
+from enum import Enum
 
 if TYPE_CHECKING:
     from app.models.models_user import User
     from app.models.models_bom import BomItem
     from app.models.models_product import ProductionConsumption
+    
+class MoveType(Enum):
+    ENTRY = "ENTRY"
+    ADJUSMENT_POSITIVE = "ADJUSTMENT_POSITIVE"
+    ADJUSMENT_NEGATIVE = "ADJUSTMENT_NEGATIVE"
+    PRODUCTION = "PRODUCTION"
 
 class Material(SQLModel, table = True):
     __tablename__ = "material" # type: ignore
     id : int = Field(default = None, primary_key = True)
     name : str
+    sku : str | None = Field(default = None, index = True, unique = True)
     unit_measure : str = Field(default = "KG")
     image_url : str | None = Field(default = None)
     reorder_threshold : float = Field(default = 0 , ge = 0)
@@ -24,17 +32,17 @@ class Material(SQLModel, table = True):
 class MaterialInventory(SQLModel, table = True):
     __tablename__ = "material_inventory" # type: ignore
     material_id : int = Field(default = None, primary_key = True, foreign_key = "material.id")
-    quantity_avaliable : float = Field(default = 0 , ge = 0)
+    quantity_available : float = Field(default = 0 , ge = 0)
     last_update : datetime = Field(default_factory = lambda : datetime.now(timezone.utc))
     material : "Material" = Relationship(back_populates = "inventory")
     
 class InventoryMovement(SQLModel, table = True):
     __tablename__ = "inventory_movement" # type: ignore
     id : int = Field(default = None, primary_key = True)
-    material_id : int = Field(default = None, primary_key = True, foreign_key = "material.id")
+    material_id : int = Field(default = None, foreign_key = "material.id")
     material : "Material" = Relationship(back_populates = "movements")
     quantity : float = Field(ge = 0)
-    reference_type : str 
+    reference_type : MoveType = Field(default = MoveType.ENTRY) 
     reference_id : int | None
     created_at : datetime = Field(default_factory = lambda : datetime.now(timezone.utc))
     created_by_id : int = Field(foreign_key = "user.id")

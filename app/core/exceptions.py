@@ -1,5 +1,4 @@
 class AppException(Exception):
-    """Base exception for the application"""
     def __init__(self, message: str, status_code: int = 400):
         self.message = message
         self.status_code = status_code
@@ -31,4 +30,11 @@ class UserNotFoundError(AppException):
         super().__init__(
             message=f"User with ID '{user_id}' not found",
             status_code=404
+        )
+        
+class MaterialAlreadyExistsError(AppException):
+    def __init__(self, sku: str):
+        super().__init__(
+            message=f"Material with SKU '{sku}' already exists",
+            status_code=409
         )

@@ -1,0 +1,108 @@
+<div id="materials-table">
+    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; border-radius: 8px;">
+        <label>
+            <input type="checkbox" name="critical_only" value="true"
+                   hx-get="/materials/list" 
+                   hx-target="#materials-table" 
+                   hx-include="[name='order_by_inventory'], [name='desc']"
+                   {% if critical_only %}checked{% endif %}> 
+            ⚠️ Solo Críticos
+        </label>
+
+        <label>
+            <input type="checkbox" name="order_by_inventory" value="true"
+                   hx-get="/materials/list" 
+                   hx-target="#materials-table" 
+                   hx-include="[name='critical_only'], [name='desc']"
+                   {% if order_by_inventory %}checked{% endif %}> 
+            📊 Ordenar Stock
+        </label>
+
+        <label style="{% if not (critical_only or order_by_inventory) %}opacity: 0.5; cursor: not-allowed;{% endif %}">
+            <input type="checkbox" name="desc" value="true"
+                   hx-get="/materials/list" 
+                   hx-target="#materials-table" 
+                   hx-include="[name='critical_only'], [name='order_by_inventory']"
+                   {% if not (critical_only or order_by_inventory) %}disabled{% endif %}
+                   {% if desc %}checked{% endif %}> 
+            ⬇️ Descendente
+        </label>
+    </div>
+    {% if materials|length == 0 %}
+        <p>No materials found.</p>
+    {% endif %}
+    <table class="striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Image</th>
+                <th>Name</th>
+                <th>SKU</th>
+                <th>Unit</th>
+                <th>Quantity Available</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for material in materials %}
+            <tr>
+                <td>{{ material.id }}</td>
+                <td>
+                    {% if material.image_url %}
+                        <img src="{{ material.image_url }}" alt="{{ material.name }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                    {% else %}
+                        <span style="font-size: 30px;">📦</span>
+                    {% endif %}
+                </td>
+                <td>{{ material.name }}</td>
+                <td><code>{{ material.sku }}</code></td>
+                <td>{{ material.unit_measure }}</td>
+                <td>{{ material.inventory.quantity_available if material.inventory else 'N/A' }}</td>
+                <td>{{ 'Critical' if material.inventory and material.inventory.quantity_available <= material.critical_threshold else 'Normal' }}</td>
+                <td></td>
+                <td>
+                    <div role="group">
+                        <button
+                            hx-get="/materials/{{ material.id }}/edit"
+                            hx-target="#modal-content"
+                            hx-swap="innerHTML"
+                            onclick="document.getElementById('modal').style.display='block'"
+                            >
+                            ✍️ Edit
+                        </button>
+                        <button class="secondary" 
+                            hx-delete="/materials/{{ material.id }}" 
+                            hx-target="#materials-table" 
+                            hx-swap="innerHTML" 
+                            hx-confirm="¿Estás seguro de eliminar {{ material.name }}? Esta acción no se puede deshacer."
+                            >
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <nav>
+    {% if page > 1 %}
+    <a hx-get="/materials/list?page={{ page - 1 }}"
+       hx-target="#materials-table"
+       hx-swap="innerHTML">
+        ⬅️ Back
+    </a>
+    {% endif %}
+    
+    <span>Page {{ page }} of {{ total_pages }}</span>
+    
+    {% if page < total_pages %}
+    <a hx-get="/materials/list?page={{ page + 1 }}"
+       hx-target="#materials-table"
+       hx-swap="innerHTML">
+        Next ➡️
+    </a>
+    {% endif %}
+    </nav>
+    <a href="/dashboard">🔙 Back</a>
+</div>

@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from app.db.database import create_tables
 from fastapi.staticfiles import StaticFiles
 from app.web import auth as web_auth
-from app.web import users, dashboard
+from app.web import users, dashboard, materials
 from app.core.templating import templates
 
 @asynccontextmanager
@@ -26,6 +26,8 @@ async def app_exception_handler(request: Request, exc: AppException):
 app.include_router(web_auth.router)
 app.include_router(users.router)
 app.include_router(dashboard.router)
+app.include_router(materials.router)
+
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.get("/")

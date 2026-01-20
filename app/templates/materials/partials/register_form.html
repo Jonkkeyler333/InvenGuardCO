@@ -1,0 +1,52 @@
+{% if error %}
+    <div class="error-message" role="alert" style="color: red; padding: 10px; border: 1px solid red; border-radius: 4px; margin-bottom: 15px;">
+        ⚠️ {{ error }}
+    </div>
+{% endif %}
+{% if success %}
+    <div class="success-message" role="alert" style="color: green; padding: 10px; border: 1px solid green; border-radius: 4px; margin-bottom: 15px;">
+        ✅ {{ success }}
+    </div>
+{% endif %}
+<form id="register-form"
+      hx-post="/materials/create"
+      hx-target="#register-container"
+      hx-swap="innerHTML">
+    
+    <div class="grid"> 
+        <div>
+            <label for="name">Material Name</label>
+            <input type="text" id="name" name="name" placeholder="e.g., Steel Rebar" required>
+        </div>
+        <div>
+            <label for="sku">SKU</label>
+            <input type="text" id="sku" name="sku" placeholder="e.g., MAT-001" required>
+        </div>
+    </div>
+    <div class="grid">
+        <div>
+            <label for="unit_measure">Unit of Measure</label>
+            <select id="unit_measure" name="unit_measure" required>
+                <option value="" selected>Select unit...</option>
+                <option value="kg">Kilograms (kg)</option>
+                <option value="lb">Pounds (lb)</option>
+                <option value="m">Meters (m)</option>
+                <option value="ft">Feet (ft)</option>
+                <option value="unit">Units</option>
+                <option value="box">Boxes</option>
+                <option value="liter">Liters</option>
+                <option value="gallon">Gallons</option>
+            </select>
+        </div>
+        <div>
+            <label for="image_url">Image URL (optional)</label>
+            <input type="url" id="image_url" name="image_url" placeholder="https://example.com/image.jpg">
+        </div>
+    </div>
+    <button type="submit" id="submit-btn">
+        Register Material
+    </button>
+    <span id="register-spinner" class="htmx-indicator" aria-busy="true">
+        Processing registration...
+    </span>
+</form>

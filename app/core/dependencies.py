@@ -89,13 +89,11 @@ class RoleChecker:
 require_plant_manager = RoleChecker([UserRole.PLANT_MANAGER])
 require_supervisor = RoleChecker([UserRole.SUPERVISOR])
 require_manager_or_supervisor = RoleChecker([UserRole.PLANT_MANAGER, UserRole.SUPERVISOR])
-require_clerk = RoleChecker([UserRole.CLERK])
-require_operator = RoleChecker([UserRole.OPERATOR])
+require_clerk_or_higher = RoleChecker([UserRole.PLANT_MANAGER, UserRole.SUPERVISOR, UserRole.CLERK])
 
 CurrentUser = Annotated[User, Depends(get_current_user)]
 
 PlantManager = Annotated[User, Depends(require_plant_manager)]
 Supervisor = Annotated[User, Depends(require_supervisor)]
 ManagerOrSupervisor = Annotated[User, Depends(require_manager_or_supervisor)]
-Clerk = Annotated[User, Depends(require_clerk)]
-Operator = Annotated[User, Depends(require_operator)]
+ClerkOrHigher = Annotated[User, Depends(require_clerk_or_higher)]

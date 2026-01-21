@@ -3,14 +3,26 @@
 
 {% block content %}
     <main class="container">
-    <header>
-        <h2>Manage Inventory</h2>
-    </header>
-    <div id="materials-table"
-        hx-get="/materials/list?page=1"
-        hx-trigger="load, materialDeleted from:body">
-        Loading materials...
+        <header>
+            <h2>Manage Inventory</h2>
+        </header>
+        <div id="materials-table"
+            hx-get="/materials/list?page=1"
+            hx-trigger="load, materialDeleted from:body">
+            Loading materials...
+        </div>
+        <a href="/materials/create" role="button">➕ Register New Material</a>
+        <div id="modal" class="modal" style="display:none;">
+            <dialog open>
+            <article>
+            <header>
+                <h3>Record Movement</h3>
+                <button aria-label="Close" onclick="document.getElementById('modal').style.display='none';" class="close"></button>
+            </header>
+            <div id="modal-content">
+            </div>
+        </article>
+    </dialog>
     </div>
-    <a href="/materials/create" role="button">➕ Register New Material</a>
     </main>
 {% endblock %}

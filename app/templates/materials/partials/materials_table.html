@@ -79,6 +79,13 @@
                             >
                             🗑️ Delete
                         </button>
+                        <button
+                            hx-get="/materials/{{ material.id }}/movement"
+                            hx-target="#modal-content"
+                            hx-swap="innerHTML"
+                            onclick="document.getElementById('modal').style.display='block'"
+                            >
+                            ✍️ Create Movement
                     </div>
                 </td>
             </tr>

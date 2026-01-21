@@ -1,0 +1,37 @@
+{% if error %}
+    <div class="error-message" style="color: red; margin-bottom: 10px;">
+    ⚠️ {{ error }}
+    </div>
+{% endif %}
+{% if success %}
+    <div class="success-message" style="color: green; margin-bottom: 10px;">
+        ✅ {{ success }}
+    </div>
+{% endif %} 
+<form id="create-movement-form"
+      hx-post="/materials/{{ material_id }}/movement"
+      hx-target="#modal-content"
+      hx-swap="innerHTML">
+
+    <div>
+        <label for="reference_type">Movement Type:</label>
+        <select id="reference_type" name="reference_type" required>
+            <option value="ENTRY">Entry</option>
+            <option value="ADJUSTMENT_POSITIVE">Adjustment Positive</option>
+            <option value="ADJUSTMENT_NEGATIVE">Adjustment Negative</option>
+        </select>
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" step="0.01" required>
+        <label for="reference_id">Reference ID (don't use here):</label>
+        <input type="text" name="reference_id" value="" readonly>
+        <label for="material_id">Material ID:</label>
+        <input type="number" name="material_id" value="{{ material_id }}" readonly>
+        <label for="created_by_id">Created By (User ID):</label>
+        <input type="number" name="created_by_id" value="{{ user.id }}" readonly>
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+        <button type="button" onclick="document.getElementById('modal').style.display='none';htmx.ajax('GET', '/materials/list?page=1', {target: '#materials-table', swap: 'outerHTML'});">Back</button>
+    </div>
+
+</form>

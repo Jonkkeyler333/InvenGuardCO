@@ -38,3 +38,24 @@ class MaterialAlreadyExistsError(AppException):
             message=f"Material with SKU '{sku}' already exists",
             status_code=409
         )
+        
+class MaterialNotFoundError(AppException):
+    def __init__(self, material_id: int):
+        super().__init__(
+            message=f"Material with ID '{material_id}' not found",
+            status_code=404
+        )
+        
+class InsufficientInventoryError(AppException):
+    def __init__(self, material_id: int, available_quantity: float, requested_quantity: float):
+        super().__init__(
+            message=f"Insufficient inventory for material ID '{material_id}'. Only have {available_quantity}, but {requested_quantity} was requested.",
+            status_code=400
+        )
+        
+class LockInventoryError(AppException):
+    def __init__(self, material_id: int):
+        super().__init__(
+            message=f"Please try again later.The element with '{material_id}' is being updated by another process.",
+            status_code=500
+        )

@@ -1,4 +1,3 @@
-from app.models.models_user import User
 from app.models.models_material import Material, MaterialInventory, InventoryMovement, MoveType
 from sqlmodel import Session, select, func, col
 from math import ceil
@@ -90,10 +89,11 @@ class MaterialRepository:
         inventory.quantity_available = new_quantity
         inventory.last_update = datetime.now(timezone.utc)
         
-    def create_inventory_movement(self, material_id: int, quantity: float, reference_type: MoveType, reference_id: int | None, created_by_id: int):
+    def create_inventory_movement(self, material_id: int, quantity: float, reference_type: MoveType, reference_id: int | None, created_by_id: int) -> InventoryMovement:
         movement = InventoryMovement(material_id = material_id, 
                                      quantity = quantity, 
                                      reference_type = reference_type, 
                                      reference_id = reference_id, 
                                      created_by_id = created_by_id)
         self.session.add(movement)
+        return movement

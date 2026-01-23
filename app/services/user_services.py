@@ -58,5 +58,5 @@ def update_user(session : Session, user_id: int, user_update: UserUpdate) -> Use
 
 def delete_user(session: Session, user_id: int) -> bool:
     user_repo = UserRepository(session)
-    result = user_repo.delete_user(user_id)
+    result = user_repo.inactive_user(user_id)
     return result

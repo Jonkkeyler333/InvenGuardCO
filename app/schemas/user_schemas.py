@@ -8,7 +8,6 @@ class UserCreate(BaseModel):
     model_config = ConfigDict(
         json_schema_extra = {
             "example": {
-                "username": "johndoe",
                 "name": "John Doe",
                 "email": "john@gmail.com",
                 "password": "strongpassword123",

@@ -8,6 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from app.web import auth as web_auth
 from app.web import users, dashboard, materials
 from app.core.templating import templates
+from app.api.users import router as users_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -23,6 +24,7 @@ async def app_exception_handler(request: Request, exc: AppException):
         content={"detail": exc.message}
     )
 
+app.include_router(users_router)
 app.include_router(web_auth.router)
 app.include_router(users.router)
 app.include_router(dashboard.router)

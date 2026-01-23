@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, Form, Request
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Form, Request
+from fastapi.responses import HTMLResponse, Response
 from app.core.templating import templates
 from app.core.dependencies import DbSession, ClerkOrHigher
-from app.core.exceptions import MaterialAlreadyExistsError, MaterialNotFoundError, InsufficientInventoryError, LockInventoryError
-from app.services.material_services import create_material, get_all_material, inventory_movement
+from app.core.exceptions import MaterialAlreadyExistsError, MaterialNotFoundError, InsufficientInventoryError, LockInventoryError, MaterialWithActiveInventoryError
+from app.services.material_services import create_material, inactive_material, get_all_material, inventory_movement
 from app.schemas.material_schemas import MaterialCreate, CreateMovementBase, InventoryMovementRead
 from pydantic import ValidationError
 
@@ -42,17 +42,20 @@ def list_materials_page(request: Request,
                         page: int = 1,
                         order_by_inventory: bool = False,
                         desc: bool = False,
-                        critical_only:  bool = False):
+                        critical_only:  bool = False,
+                        inactive: bool = False):
     materials, total_pages = get_all_material(session, page = page, limit = 10,
                                               order_by_inventory = order_by_inventory,
                                               desc = desc,
-                                              critical_only = critical_only)
+                                              critical_only = critical_only,
+                                              inactive = inactive)
     return templates.TemplateResponse("materials/partials/materials_table.html", 
                                       {"request": request, 
                                        "materials": materials,
                                        "page": page,
                                        "order_by_inventory": order_by_inventory,
                                        "desc": desc,
+                                       "inactive": inactive,
                                        "critical_only": critical_only,
                                        "total_pages": total_pages})
     
@@ -93,9 +96,30 @@ def register_material_movement(request: Request,
             error_messages.append(f"{field}: {msg}")
         return templates.TemplateResponse(
             "materials/partials/register_movement.html",
-            {"request": request, "error": " | ".join(error_messages), "material_id": id}
+            {"request": request,"user": clerk_user, "error": " | ".join(error_messages), "material_id": id}
         )
     except (MaterialNotFoundError, InsufficientInventoryError, LockInventoryError) as e:
         return templates.TemplateResponse("materials/partials/register_movement.html", 
                                           {"request": request,
+                                           "user": clerk_user,  
+                                           "error": str(e)})
+        
+@router.delete("/{id}", response_class = HTMLResponse)
+def delete_material_endpoint(request: Request,
+                             session: DbSession,
+                             clerk_user: ClerkOrHigher,
+                             id: int):
+    try:
+        success = inactive_material(session, id)
+        if success:
+            response = Response(status_code=204)
+            response.headers["HX-Trigger"] = 'materialDeleted'
+            return response
+        else:
+            return templates.TemplateResponse("materials/partials/materials_table.html", 
+                                          {"request": request, 
+                                           "error": "Unexpected error occurred while deleting the material."}) 
+    except (MaterialNotFoundError, LockInventoryError, MaterialWithActiveInventoryError) as e:
+        return templates.TemplateResponse("materials/partials/materials_table.html", 
+                                          {"request": request, 
                                            "error": str(e)})

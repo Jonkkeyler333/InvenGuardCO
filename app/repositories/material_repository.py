@@ -33,28 +33,33 @@ class MaterialRepository:
         material = self.session.exec(statement).first()
         return material
     
-    def get_all_material(self, page : int = 1, limit: int = 10) -> Tuple[list[Material], int]:
+    def get_all_material(self, page : int = 1, limit: int = 10, inactive = False) -> Tuple[list[Material], int]:
         offset = (page - 1) * limit
-        statement = select(Material).offset(offset).limit(limit).order_by(col(Material.id))
+        status_filter = (Material.is_active == (not inactive))
+        statement = select(Material).where(status_filter).offset(offset).limit(limit).order_by(col(Material.id))
         results = self.session.exec(statement).all()
-        total = self.session.exec(select(func.count(col(Material.id)))).one()
+        total = self.session.exec(select(func.count(col(Material.id))).where(status_filter)).one()
         total_pages = ceil(total / limit)
         return list(results), total_pages
     
-    def get_all_material_inventory(self, page : int = 1, limit: int = 10, desc: bool = False) -> Tuple[list[Material], int]:
+    def get_all_material_inventory(self, page : int = 1, limit: int = 10, desc: bool = False, inactive: bool = False) -> Tuple[list[Material], int]:
         offset = (page - 1) * limit
+        status_filter = (Material.is_active == (not inactive))
         statement = (select(Material)
+                     .where(status_filter)
                      .join(MaterialInventory)
                      .offset(offset)
                      .limit(limit)
                      .order_by(col(MaterialInventory.quantity_available).desc() if desc else col(MaterialInventory.quantity_available).asc()))
         results = self.session.exec(statement).all()
-        total = self.session.exec(select(func.count(col(Material.id)))).one()
+        total = self.session.exec(select(func.count(col(Material.id))).where(status_filter)).one()
         total_pages = ceil(total / limit)
         return list(results), total_pages
     
-    def get_critical_inventory_materials(self, desc: bool = False) -> list[Material]:
+    def get_critical_inventory_materials(self, desc: bool = False, inactive: bool = False) -> list[Material]:
+        status_filter = (Material.is_active == (not inactive))
         statement = (select(Material)
+                     .where(status_filter)
                      .join(MaterialInventory)
                      .where(MaterialInventory.quantity_available <= Material.critical_threshold)
                      .order_by(col(MaterialInventory.quantity_available).desc() if desc else col(MaterialInventory.quantity_available).asc()))
@@ -72,18 +77,22 @@ class MaterialRepository:
         self.session.refresh(material_db)
         return material_db
     
-    def delete_material(self, material_id: int) -> bool:
+    def delete_material(self, material_id: int) -> bool | Material:
         material_db = self.session.get(Material, material_id)
         if not material_db:
             return False
-        self.session.delete(material_db)
-        self.session.commit()
-        return True
+        material_db.is_active = False
+        return material_db
     
     def lock_inventory_row(self, material_id: int) -> MaterialInventory | None:
         statement = select(MaterialInventory).where(MaterialInventory.material_id == material_id).with_for_update()
         inventory = self.session.exec(statement).first()
         return inventory
+    
+    def lock_material_row(self, material_id: int) -> Material | None:
+        statement = select(Material).where(Material.id == material_id).with_for_update()
+        material = self.session.exec(statement).first()
+        return material
     
     def update_inventory_quantity(self, inventory: MaterialInventory, new_quantity: float):
         inventory.quantity_available = new_quantity

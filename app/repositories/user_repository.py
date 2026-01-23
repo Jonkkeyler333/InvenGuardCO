@@ -42,10 +42,10 @@ class UserRepository:
         self.session.refresh(user)
         return user        
     
-    def delete_user(self, user_id: int) -> bool:
+    def inactive_user(self, user_id: int) -> bool:
         user = self.session.get(User, user_id)
         if not user:
             return False
-        self.session.delete(user)
+        user.is_active = False
         self.session.commit()
         return True

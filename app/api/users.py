@@ -20,7 +20,6 @@ def create_user(user_create: UserCreate, session: DbSession):
     """
     Register a new user.
     
-    - **username**: Unique username
     - **name**: User's full name
     - **email**: User's email address
     - **password**: User's password

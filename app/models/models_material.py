@@ -21,6 +21,7 @@ class Material(SQLModel, table = True):
     sku : str | None = Field(default = None, index = True, unique = True)
     unit_measure : str = Field(default = "KG")
     image_url : str | None = Field(default = None)
+    is_active : bool = Field(default = True)
     reorder_threshold : float = Field(default = 0 , ge = 0)
     critical_threshold : float = Field(default = 0 , ge = 0)
     created_at : datetime = Field(default_factory = lambda : datetime.now(timezone.utc))

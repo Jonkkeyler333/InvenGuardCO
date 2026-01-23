@@ -2,29 +2,35 @@
     <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; border-radius: 8px;">
         <label>
             <input type="checkbox" name="critical_only" value="true"
-                   hx-get="/materials/list" 
-                   hx-target="#materials-table" 
-                   hx-include="[name='order_by_inventory'], [name='desc']"
-                   {% if critical_only %}checked{% endif %}> 
+                hx-get="/materials/list" 
+                hx-target="#materials-table" 
+                hx-include="[name='order_by_inventory'], [name='desc'], [name='inactive']"
+                {% if critical_only %}checked{% endif %}> 
             ⚠️ Solo Críticos
         </label>
-
         <label>
             <input type="checkbox" name="order_by_inventory" value="true"
-                   hx-get="/materials/list" 
-                   hx-target="#materials-table" 
-                   hx-include="[name='critical_only'], [name='desc']"
-                   {% if order_by_inventory %}checked{% endif %}> 
+                hx-get="/materials/list" 
+                hx-target="#materials-table" 
+                hx-include="[name='critical_only'], [name='desc'], [name='inactive']"
+                {% if order_by_inventory %}checked{% endif %}> 
             📊 Ordenar Stock
         </label>
-
+        <label>
+            <input type="checkbox" name="inactive" value="true"
+                hx-get="/materials/list" 
+                hx-target="#materials-table" 
+                hx-include="[name='critical_only'], [name='order_by_inventory'], [name='desc']"
+                {% if inactive %}checked{% endif %}> 
+            🚫 Solo Inactivos
+        </label>
         <label style="{% if not (critical_only or order_by_inventory) %}opacity: 0.5; cursor: not-allowed;{% endif %}">
             <input type="checkbox" name="desc" value="true"
-                   hx-get="/materials/list" 
-                   hx-target="#materials-table" 
-                   hx-include="[name='critical_only'], [name='order_by_inventory']"
-                   {% if not (critical_only or order_by_inventory) %}disabled{% endif %}
-                   {% if desc %}checked{% endif %}> 
+                hx-get="/materials/list" 
+                hx-target="#materials-table" 
+                hx-include="this, [name='critical_only'], [name='order_by_inventory'], [name='inactive']"
+                {% if not (critical_only or order_by_inventory) %}disabled{% endif %}
+                {% if desc %}checked{% endif %}> 
             ⬇️ Descendente
         </label>
     </div>
@@ -41,6 +47,7 @@
                 <th>Unit</th>
                 <th>Quantity Available</th>
                 <th>Status</th>
+                <th>Active</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -60,7 +67,7 @@
                 <td>{{ material.unit_measure }}</td>
                 <td>{{ material.inventory.quantity_available if material.inventory else 'N/A' }}</td>
                 <td>{{ 'Critical' if material.inventory and material.inventory.quantity_available <= material.critical_threshold else 'Normal' }}</td>
-                <td></td>
+                <td>{{ 'Yes' if material.is_active else 'No' }}</td>
                 <td>
                     <div role="group">
                         <button
@@ -75,7 +82,7 @@
                             hx-delete="/materials/{{ material.id }}" 
                             hx-target="#materials-table" 
                             hx-swap="innerHTML" 
-                            hx-confirm="¿Estás seguro de eliminar {{ material.name }}? Esta acción no se puede deshacer."
+                            hx-confirm="¿Estás seguro de eliminar {{ material.name }}? Esta acción no se puede deshacer y el inventario asociado será eliminado."
                             >
                             🗑️ Delete
                         </button>

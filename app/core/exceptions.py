@@ -59,3 +59,10 @@ class LockInventoryError(AppException):
             message=f"Please try again later.The element with '{material_id}' is being updated by another process.",
             status_code=500
         )
+        
+class MaterialWithActiveInventoryError(AppException):
+    def __init__(self, material_id: int, available_quantity: float):
+        super().__init__(
+            message=f"Cannot delete material ID '{material_id}' because it has active inventory of {available_quantity}.",
+            status_code=400
+        )

@@ -1,18 +1,22 @@
 {% extends "base.html" %}
 {% block title %}Manage Users - InvenGuardCO{% endblock %}
-
 {% block content %}
-<main class="container"> 
-    <header>
-    <h2>Manage Users</h2>
+    <header class="page-header mb-3">
+        <div>
+            <h2>Manage Users</h2>
+            <p class="subtitle">Create, edit and manage system users</p>
+        </div>
+
+        <div role="group">
+            <a href="/users/create" role="button">Register user</a>
+            <a href="/dashboard" role="button" class="secondary">Back</a>
+        </div>
     </header>
     <div id="users-table"
         hx-get="/users/list?page=1"
         hx-trigger="load, userDeleted from:body">
         Loading users...
     </div>
-    <a href="/users/create" role="button">👦🏽👩🏽 Register new user</a>
-    <a href="/dashboard" role="button">⬅️Back to Dashboard</a>
     <div id="modal" class="modal" style="display:none;">
     <dialog open>
         <article>
@@ -25,5 +29,4 @@
         </article>
     </dialog>
     </div>
-</main>
 {% endblock %}

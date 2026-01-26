@@ -135,8 +135,8 @@ User stories plan :
 
 - [✓] US-00 : User Authentication (Login/Logout)
 - [✓] US-01 : Manage Users 
-- […] US-02 : Record Material Entry
-- […] US-03 : Adjust Inventory
+- [✓] US-02 : Record Material Entry
+- [✓] US-03 : Adjust Inventory
 - […] US-04 : Configure Alert Thresholds
 - […] US-05 : Manage Bill of Materials (BOM)
 - […] US-06 : Create Production Order

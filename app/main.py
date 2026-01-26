@@ -9,6 +9,7 @@ from app.web import auth as web_auth
 from app.web import users, dashboard, materials
 from app.core.templating import templates
 from app.api.users import router as users_router
+from fastapi.staticfiles import StaticFiles
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -16,6 +17,8 @@ async def lifespan(app: FastAPI):
     yield
     
 app = FastAPI(title="InvenGuardCO", version="0.1.0", lifespan=lifespan)
+
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.exception_handler(AppException)
 async def app_exception_handler(request: Request, exc: AppException):

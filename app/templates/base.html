@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
 <head>
     <title>{% block title %}InvenGuardCO{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/custom.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <style>
         /* ==========================================
@@ -38,9 +39,13 @@
         {% block content %}
         {% endblock %}
     </main>
-</body>
-<footer  class="container-fluid">
-    <p>&copy; 2025 InvenGuardCO. All rights reserved.</p>
+    <footer class="footer-custom">
+    <div class="container">
+        <small>
+            &copy; 2025 InvenGuardCO | Sistema de Gestión de Inventario
+        </small>
+    </div>
 </footer>
+</body>
 <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.js" integrity="sha384-ezjq8118wdwdRMj+nX4bevEi+cDLTbhLAeFF688VK8tPDGeLUe0WoY2MZtSla72F" crossorigin="anonymous"></script>
 </html>

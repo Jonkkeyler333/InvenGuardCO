@@ -1,14 +1,29 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
+
 {% block content %}
-<main class="container"> 
-    <header>
+<header class="dashboard-header mb-3">
+    <div>
         <h1>Dashboard</h1>
-        <h2>Welcome to the Dashboard</h2>
-    </header>
-    <p>This is your main dashboard where you can monitor key metrics and access various features.</p>
-    <p>User: {{ current_user.name }}</p>
-    {% include "dashboard/partials/" ~ current_user.role.value ~ "_panel.html" %}
-    <a href="/auth/logout" role="button">↩️ Logout</a>
-</main>
+        <p class="subtitle">Welcome, {{ current_user.name }}</p>
+    </div>
+
+    <a href="/auth/logout" role="button" class="outline">
+        Logout
+    </a>
+</header>
+
+<section class="dashboard-grid">
+    <article class="card">
+        <h3>Resumen</h3>
+        <p>
+            Desde aquí puedes monitorear métricas clave y acceder a las funciones del sistema.
+        </p>
+    </article>
+
+    <article class="card">
+        {% include "dashboard/partials/" ~ current_user.role.value ~ "_panel.html" %}
+    </article>
+    
+</section>
 {% endblock %}

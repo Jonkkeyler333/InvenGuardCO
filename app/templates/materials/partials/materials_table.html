@@ -69,22 +69,22 @@
                 <td>{{ 'Critical' if material.inventory and material.inventory.quantity_available <= material.critical_threshold else 'Normal' }}</td>
                 <td>{{ 'Yes' if material.is_active else 'No' }}</td>
                 <td>
-                    <div role="group">
+                    <div class="actions">
                         <button
                             hx-get="/materials/{{ material.id }}/edit"
                             hx-target="#modal-content"
                             hx-swap="innerHTML"
                             onclick="document.getElementById('modal').style.display='block'"
                             >
-                            ✍️ Edit
+                            Edit
                         </button>
                         <button class="secondary" 
                             hx-delete="/materials/{{ material.id }}" 
                             hx-target="#materials-table" 
                             hx-swap="innerHTML" 
-                            hx-confirm="¿Estás seguro de eliminar {{ material.name }}? Esta acción no se puede deshacer y el inventario asociado será eliminado."
+                            hx-confirm="Are you sure you want to delete {{ material.name }}? This action cannot be undone and the associated inventory will be deleted."
                             >
-                            🗑️ Delete
+                            Delete
                         </button>
                         <button
                             hx-get="/materials/{{ material.id }}/movement"
@@ -92,7 +92,18 @@
                             hx-swap="innerHTML"
                             onclick="document.getElementById('modal').style.display='block'"
                             >
-                            ✍️ Create Movement
+                            Create Movement
+                        </button>
+                        {% if user.role.value == 'plant_manager' %}
+                            <button
+                                hx-get="/materials/{{ material.id }}/adjustment"
+                                hx-target="#modal-content"
+                                hx-swap="innerHTML"
+                                onclick="document.getElementById('modal').style.display='block'"
+                                >
+                                Threshold Adjustment
+                            </button>
+                        {% endif %}
                     </div>
                 </td>
             </tr>
@@ -104,7 +115,7 @@
     <a hx-get="/materials/list?page={{ page - 1 }}"
        hx-target="#materials-table"
        hx-swap="innerHTML">
-        ⬅️ Back
+        Back
     </a>
     {% endif %}
     
@@ -114,9 +125,9 @@
     <a hx-get="/materials/list?page={{ page + 1 }}"
        hx-target="#materials-table"
        hx-swap="innerHTML">
-        Next ➡️
+        Next
     </a>
     {% endif %}
     </nav>
-    <a href="/dashboard">🔙 Back</a>
+    <a href="/dashboard">Back</a>
 </div>

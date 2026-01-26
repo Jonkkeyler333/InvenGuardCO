@@ -1,7 +1,6 @@
-<div id="users-table">
-    {% if users|length == 1 %}
+{% if users|length == 0 %}
         <p>No users found.</p>
-    {% endif %}
+{% endif %}
     <table class="striped">
         <thead>
             <tr>
@@ -20,16 +19,20 @@
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.role }}</td>
-                <td>{{ "✅ Active" if user.is_active else "❌ Inactive" }}</td>
                 <td>
-                    <div role="group">
+                    <span class="status {{ 'active' if user.is_active else 'inactive' }}">
+                        {{ "Active" if user.is_active else "Inactive" }}
+                    </span>
+                </td>
+                <td>
+                    <div class="actions">
                         <button
                             hx-get="/users/{{ user.id }}/edit"
                             hx-target="#modal-content"
                             hx-swap="innerHTML"
                             onclick="document.getElementById('modal').style.display='block'"
                             >
-                            ✍️ Edit
+                            Edit
                         </button>
                         <button class="secondary" 
                             hx-delete="/users/{{ user.id }}" 
@@ -37,7 +40,7 @@
                             hx-swap="innerHTML" 
                             hx-confirm="¿Estás seguro de eliminar a {{ user.name }}? Esta acción no se puede deshacer."
                             >
-                            🗑️ Delete
+                            Delete
                         </button>
                     </div>
                 </td>
@@ -50,7 +53,7 @@
     <a hx-get="/users/list?page={{ page - 1 }}"
        hx-target="#users-table"
        hx-swap="innerHTML">
-        ⬅️ Back
+        Previous
     </a>
     {% endif %}
     
@@ -60,8 +63,7 @@
     <a hx-get="/users/list?page={{ page + 1 }}"
        hx-target="#users-table"
        hx-swap="innerHTML">
-        Next ➡️
+        Next
     </a>
     {% endif %}
-</nav>
-</div>
+    </nav>

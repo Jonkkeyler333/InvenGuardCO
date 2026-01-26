@@ -1,7 +1,10 @@
 {% block content %}
-    <h3>Manager Panel</h3>
-    <p>Welcome, {{ current_user.email }}! Here you can manage your team and oversee operations.</p>
+    <header class="mb-2">
+        <h3>Manager Panel</h3>
+        <p>Welcome, {{ current_user.email }}! Here you can manage your team and oversee operations.</p>
+    </header>
     <ul>
-        <li><a href="/users" role="button">👥 Manage Team</a></li>
+        <li><a href="/users">👥 Manage Team</a></li>
+        <li><a href="/materials">Manage inventory</a></li>
     </ul>
 {% endblock %}

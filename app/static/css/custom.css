@@ -1,0 +1,250 @@
+/* ==========================================
+   VARIABLES DE COLOR (Personaliza aquí)
+   ========================================== */
+:root {
+    --color-primary: #3b82f6;      /* Azul más suave */
+    --color-primary-hover: #2563eb;
+    --color-success: #10b981;       
+    --color-danger: #ef4444;        
+    --color-warning: #f59e0b;       
+    
+    /* Fondos más neutros */
+    --bg-light: #ddf0f4;           /* Gris muy claro */
+    --bg-card: #ffffff;            /* Blanco puro */
+    
+    /* Para el header del login */
+    --bg-header: #1e293b;          /* Gris oscuro (no negro puro) */
+    --text-header: #f8fafc;        /* Texto claro pero no blanco puro */
+
+    /* Espaciado consistente */
+    --spacing-xs: 0.5rem;   /* 8px */
+    --spacing-sm: 1rem;     /* 16px */
+    --spacing-md: 1.5rem;   /* 24px */
+    --spacing-lg: 2rem;     /* 32px */
+    --spacing-xl: 3rem;     /* 48px */
+    
+    /* Bordes */
+    --radius: 8px;
+    --radius-lg: 12px;
+}
+
+/* ==========================================
+   LAYOUT GENERAL
+   ========================================== */
+
+/* Body con fondo sutil */
+body {
+    background-color: var(--bg-light);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main ocupa el espacio disponible */
+main.container {
+    flex: 1;
+    padding-top: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+}
+
+/* ==========================================
+   FOOTER MEJORADO
+   ========================================== */
+.footer-custom {
+    background-color: var(--bg-card);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: var(--spacing-md) 0;
+    text-align: center;
+    margin-top: auto; /* Empuja al footer al final */
+}
+
+.footer-custom small {
+    color: #64748b;
+}
+
+/* ==========================================
+   CARDS Y CONTENEDORES
+   ========================================== */
+
+/* Card centrado (como tu login) */
+.card-center {
+    max-width: 420px;
+    margin: var(--spacing-xl) auto;
+    background-color: var(--bg-card);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Header del card */
+.card-center header {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.card-center header h2 {
+    margin-bottom: var(--spacing-xs);
+    font-size: 1.5rem;
+}
+
+.card-center header h3 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #64748b;
+    margin-top: 0;
+}
+
+/* ==========================================
+   MENSAJES DE ERROR/SUCCESS
+   ========================================== */
+
+/* Error message mejorado */
+.alert {
+    padding: var(--spacing-sm);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing-md);
+    border-left: 4px solid;
+}
+
+.alert-error {
+    background-color: #fee2e2;
+    border-color: var(--color-danger);
+    color: #991b1b;
+}
+
+.alert-success {
+    background-color: #d1fae5;
+    border-color: var(--color-success);
+    color: #065f46;
+}
+
+.alert-warning {
+    background-color: #fef3c7;
+    border-color: var(--color-warning);
+    color: #92400e;
+}
+
+/* ==========================================
+   BOTONES PERSONALIZADOS
+   ========================================== */
+
+/* Botón primario con tu color */
+button[type="submit"],
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+button[type="submit"]:hover,
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+}
+
+/* ==========================================
+   HTMX INDICATORS
+   ========================================== */
+.htmx-indicator {
+    display: none;
+}
+
+.htmx-request .htmx-indicator {
+    display: inline;
+}
+
+.htmx-request.htmx-indicator {
+    display: inline;
+}
+
+/* Spinner bonito */
+.spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: var(--spacing-xs);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==========================================
+   UTILIDADES
+   ========================================== */
+
+/* Texto centrado */
+.text-center {
+    text-align: center;
+}
+
+/* Espaciado superior */
+.mt-1 { margin-top: var(--spacing-sm); }
+.mt-2 { margin-top: var(--spacing-md); }
+.mt-3 { margin-top: var(--spacing-lg); }
+
+/* Espaciado inferior */
+.mb-1 { margin-bottom: var(--spacing-sm); }
+.mb-2 { margin-bottom: var(--spacing-md); }
+.mb-3 { margin-bottom: var(--spacing-lg); }
+
+/* ==========================================
+   DASHBOARD
+   ========================================== */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-header .subtitle {
+    margin: 0;
+    color: #64748b;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.card {
+    background-color: var(--bg-card);
+    padding: var(--spacing-md);
+    border-radius: var(--radius);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.status {
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.status.active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status.inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.actions {
+    display: flex;
+    gap: 0.35rem; /* Menos espacio entre botones */
+    flex-wrap: wrap;
+}
+
+.actions button {
+    font-size: 0.75rem; /* Texto más pequeño */
+    padding: 0.35rem 0.65rem; /* Menos padding */
+    white-space: nowrap;
+}

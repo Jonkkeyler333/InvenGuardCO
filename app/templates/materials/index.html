@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 {% block title %}Manage Inventory - InvenGuardCO{% endblock %}
-
 {% block content %}
     <main class="container">
         <header>
             <h2>Manage Inventory</h2>
         </header>
+        <a href="/materials/create" role="button">Register New Material</a>
         <div id="materials-table"
             hx-get="/materials/list?page=1"
             hx-trigger="load, materialDeleted from:body">
             Loading materials...
         </div>
-        <a href="/materials/create" role="button">➕ Register New Material</a>
         <div id="modal" class="modal" style="display:none;">
             <dialog open>
             <article>

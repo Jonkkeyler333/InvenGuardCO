@@ -3,8 +3,8 @@ from fastapi.responses import HTMLResponse, Response
 from app.core.templating import templates
 from app.core.dependencies import DbSession, ClerkOrHigher
 from app.core.exceptions import MaterialAlreadyExistsError, MaterialNotFoundError, InsufficientInventoryError, LockInventoryError, MaterialWithActiveInventoryError
-from app.services.material_services import create_material, inactive_material, get_all_material, inventory_movement
-from app.schemas.material_schemas import MaterialCreate, CreateMovementBase, InventoryMovementRead
+from app.services.material_services import create_material, inactive_material, get_all_material, inventory_movement, get_material_by_id, update_material_thresholds
+from app.schemas.material_schemas import MaterialCreate, CreateMovementBase, InventoryMovementRead, MaterialUpdateThresholds
 from pydantic import ValidationError
 
 router = APIRouter(prefix="/materials", tags=["materials"])
@@ -124,3 +124,82 @@ def delete_material_endpoint(request: Request,
         return templates.TemplateResponse("materials/partials/materials_table.html", 
                                           {"request": request, 
                                            "error": str(e)})
+        
+@router.get("/{id}/thresholds", response_class = HTMLResponse)
+def material_thresholds_page(request: Request,
+                             user: ClerkOrHigher,
+                             session: DbSession,
+                             id: int):
+    try:
+        material = get_material_by_id(session, id)
+        return templates.TemplateResponse("materials/partials/update_thresholds.html",
+                                          {"request": request,
+                                           "material": material,
+                                           "user" : user})
+    except MaterialNotFoundError as e:
+        return templates.TemplateResponse("materials/partials/update_thresholds.html", 
+                                          {"request": request,
+                                           "error": str(e),
+                                           "user" : user})
+        
+@router.post("/{id}/thresholds", response_class = HTMLResponse)
+def update_material_thresholds_endpoint(request: Request,
+                                        session: DbSession,
+                                        user: ClerkOrHigher,
+                                        id: int,
+                                        reorder_threshold: float = Form(),
+                                        critical_threshold: float = Form()):
+    
+    material_db = get_material_by_id(session, id)
+    if not material_db:
+        return templates.TemplateResponse("materials/partials/update_thresholds.html", 
+                                          {"request": request,
+                                           "error": f"Material with ID {id} not found.",
+                                           "user" : user})
+    try:
+        update_data = MaterialUpdateThresholds(material_id = id, reorder_threshold = reorder_threshold, critical_threshold = critical_threshold)
+        material = update_material_thresholds(session, update_data)
+        return templates.TemplateResponse("materials/partials/update_thresholds.html",
+                                          {"request": request,
+                                           "material": material,
+                                           "user" : user,
+                                           "success": f"Thresholds updated successfully for material {material.sku}."})
+    except ValidationError as e:
+        error_messages = []
+        for error in e.errors():
+            field = error["loc"][0] if error["loc"] else "field"
+            msg = error["msg"]
+            error_messages.append(f"{field}: {msg}")
+        return templates.TemplateResponse(
+            "materials/partials/update_thresholds.html",
+            {"request": request,"material":material_db, "user": user, "error": " | ".join(error_messages)}
+        )
+    except LockInventoryError as e:
+        return templates.TemplateResponse("materials/partials/update_thresholds.html", 
+                                          {"request": request,
+                                           "error": str(e),
+                                           "material": material_db,
+                                           "user" : user})
+    except MaterialNotFoundError as e:
+        return templates.TemplateResponse("materials/partials/update_thresholds.html", 
+                                          {"request": request,
+                                           "error": str(e),
+                                           "material": material_db,
+                                           "user" : user})
+        
+@router.get("/{id}/edit", response_class = HTMLResponse)
+def edit_material_page(request: Request,
+                       user: ClerkOrHigher,
+                       session: DbSession,
+                       id: int):
+    try:
+        material = get_material_by_id(session, id)
+        return templates.TemplateResponse("materials/partials/edit_material.html",
+                                          {"request": request,
+                                           "material": material,
+                                           "user" : user})
+    except MaterialNotFoundError as e:
+        return templates.TemplateResponse("materials/partials/edit_material.html", 
+                                          {"request": request,
+                                           "error": str(e),
+                                           "user" : user})

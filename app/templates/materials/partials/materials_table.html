@@ -72,9 +72,9 @@
                     <div class="actions">
                         <button
                             hx-get="/materials/{{ material.id }}/edit"
-                            hx-target="#modal-content"
+                            hx-target="#modal-content-edit"
                             hx-swap="innerHTML"
-                            onclick="document.getElementById('modal').style.display='block'"
+                            onclick="document.getElementById('modal_edit').style.display='block'"
                             >
                             Edit
                         </button>
@@ -96,10 +96,11 @@
                         </button>
                         {% if user.role.value == 'plant_manager' %}
                             <button
-                                hx-get="/materials/{{ material.id }}/adjustment"
-                                hx-target="#modal-content"
+                                hx-get="/materials/{{ material.id }}/thresholds"
+                                hx-target="#modal-content-thres"
                                 hx-swap="innerHTML"
-                                onclick="document.getElementById('modal').style.display='block'"
+                                onclick="document.getElementById('modal_thres').style.display='block'"
+                                title="Adjust critical threshold xd"
                                 >
                                 Threshold Adjustment
                             </button>

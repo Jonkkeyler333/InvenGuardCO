@@ -66,16 +66,13 @@ class MaterialRepository:
         results = self.session.exec(statement).all()
         return list(results)
     
-    def update_material(self, material_id: int, **kwargs) -> Material | None:
-        material_db = self.session.get(Material, material_id)
-        if not material_db:
-            return None
+    def update_material(self, material: Material, **kwargs) -> Material | None:
         for key, value in kwargs.items():
-            if hasattr(material_db, key) and value is not None:
-                setattr(material_db, key, value)
+            if hasattr(material, key) and value is not None:
+                setattr(material, key, value)
         self.session.commit()
-        self.session.refresh(material_db)
-        return material_db
+        self.session.refresh(material)
+        return material
     
     def delete_material(self, material_id: int) -> bool | Material:
         material_db = self.session.get(Material, material_id)
@@ -106,3 +103,9 @@ class MaterialRepository:
                                      created_by_id = created_by_id)
         self.session.add(movement)
         return movement
+    
+    def update_material_thresholds(self, material: Material, reorder_threshold: float | None = None, critical_threshold: float | None = None):
+        if reorder_threshold is not None:
+            material.reorder_threshold = reorder_threshold
+        if critical_threshold is not None:
+            material.critical_threshold = critical_threshold

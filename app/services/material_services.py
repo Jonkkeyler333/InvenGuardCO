@@ -1,10 +1,18 @@
 from datetime import datetime, timezone
 from sqlmodel import Session
 from app.repositories.material_repository import MaterialRepository
-from app.schemas.material_schemas import MaterialCreate, MaterialRead, MaterialUpdate, MaterialInventoryRead, CreateMovementBase, InventoryMovementRead
+from app.schemas.material_schemas import MaterialCreate, MaterialRead, MaterialUpdate, MaterialInventoryRead, CreateMovementBase, InventoryMovementRead, MaterialUpdateThresholds
 from app.core.exceptions import MaterialAlreadyExistsError, MaterialNotFoundError, InsufficientInventoryError, LockInventoryError, MaterialWithActiveInventoryError
 from typing import Tuple
 from sqlalchemy.exc import OperationalError
+from pydantic import ValidationError
+
+def get_material_by_id(db: Session, material_id: int) -> MaterialRead:
+    repository = MaterialRepository(db)
+    material = repository.get_material_by_id(material_id)
+    if material is None:
+        raise MaterialNotFoundError(material_id)
+    return MaterialRead.model_validate(material)
 
 def create_material(db: Session, material_create: MaterialCreate) -> MaterialRead:
     repository = MaterialRepository(db)
@@ -67,3 +75,34 @@ def inactive_material(db: Session, material_id: int) -> bool:
     except:
         db.rollback()
         raise ValueError("An error occurred during material deletion.")
+    
+def update_material_thresholds(db: Session,thresholds: MaterialUpdateThresholds) -> MaterialRead:
+    repository = MaterialRepository(db)
+    try:
+        material = repository.lock_material_row(thresholds.material_id)
+        if material is None:
+            raise MaterialNotFoundError(thresholds.material_id)
+        repository.update_material_thresholds(material,
+                                              reorder_threshold = thresholds.reorder_threshold,
+                                              critical_threshold = thresholds.critical_threshold)
+        db.commit()
+        db.refresh(material)
+        return MaterialRead.model_validate(material)
+    except ValueError as ve:
+        db.rollback()
+        raise ve
+    except OperationalError:
+        db.rollback()
+        raise LockInventoryError(thresholds.material_id)
+    
+def update_material(db: Session, material_id, material_update: MaterialUpdate) -> MaterialRead:
+    repository = MaterialRepository(db)
+    try:
+        material = repository.lock_material_row(material_id)
+        if material is None:
+            raise MaterialNotFoundError(material_id)
+        updated_material = repository.update_material(material, **material_update.model_dump(exclude_unset = True)) #repo method do the commit and refresh
+        return MaterialRead.model_validate(updated_material)
+    except OperationalError:
+        db.rollback()
+        raise LockInventoryError(material_id)

@@ -1,0 +1,31 @@
+{% if error %}
+    <div class="error-message" style="color: red; margin-bottom: 10px;">
+    ⚠️ {{ error }}
+    </div>
+{% endif %}
+{% if success %}
+    <div class="success-message" style="color: green; margin-bottom: 10px;">
+        ✅ {{ success }}
+    </div>
+{% endif %} 
+<form id="update-thresholds-form"
+      hx-post="/materials/{{ material.id }}/thresholds"
+      hx-target="#modal-content-thres"
+      hx-swap="innerHTML">
+
+    <div>
+        <label for="material_id">Material ID: {{ material.id }}</label>
+        <label>Unit: {{ material.unit_measure }}</label>
+        <label for="reorder_threshold">Reorder Threshold:</label>
+        <input type="number" name="reorder_threshold" value="{{ material.reorder_threshold }}" step="0.01" required>
+        <label for="critical_threshold">Critical Threshold:</label>
+        <input type="number" name="critical_threshold" value="{{ material.critical_threshold }}" step="0.01" required>
+        <label for="created_by_id">Created By (User ID):</label>
+        <input type="number" name="created_by_id" value="{{ user.id }}" readonly>
+    </div>
+    <div>
+        <button type="submit">Submit</button>
+        <button type="button" onclick="document.getElementById('modal_thres').style.display='none';htmx.ajax('GET', '/materials/list?page=1', {target: '#materials-table', swap: 'outerHTML'});">Back</button>
+    </div>
+
+</form>

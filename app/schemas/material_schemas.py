@@ -1,5 +1,5 @@
-from pydantic import BaseModel, ConfigDict, Field
-from typing import Optional
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+from typing import Optional, Self
 from datetime import datetime
 
 class MaterialBase(BaseModel):
@@ -33,6 +33,19 @@ class MaterialInventoryRead(BaseModel):
     quantity_available: float
     last_update: datetime | None = None
     model_config = ConfigDict(from_attributes = True)
+
+class MaterialUpdateThresholds(BaseModel):
+    material_id: int
+    reorder_threshold: float = Field(ge = 0)
+    critical_threshold: float = Field(ge = 0)
+    @model_validator(mode='after')
+    def validate_thresholds(self) -> Self:
+        if self.reorder_threshold <= self.critical_threshold:
+            raise ValueError(
+                f'Reorder threshold ({self.reorder_threshold}) must be greater '
+                f'than critical threshold ({self.critical_threshold})'
+            )
+        return self
     
 class CreateMovementBase(BaseModel):
     material_id: int

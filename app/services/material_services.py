@@ -95,7 +95,7 @@ def update_material_thresholds(db: Session,thresholds: MaterialUpdateThresholds)
         db.rollback()
         raise LockInventoryError(thresholds.material_id)
     
-def update_material(db: Session, material_id, material_update: MaterialUpdate) -> MaterialRead:
+def update_material(db: Session, material_id:int, material_update: MaterialUpdate) -> MaterialRead:
     repository = MaterialRepository(db)
     try:
         material = repository.lock_material_row(material_id)

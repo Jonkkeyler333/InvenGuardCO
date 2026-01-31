@@ -9,9 +9,9 @@
     </div>
 {% endif %} 
 <form id="update-thresholds-form"
-      hx-post="/materials/{{ material.id }}/thresholds"
-      hx-target="#modal-content-thres"
-      hx-swap="innerHTML">
+    hx-post="/materials/{{ material.id }}/thresholds"
+    hx-target="#modal-content-thres"
+    hx-swap="innerHTML">
 
     <div>
         <label for="material_id">Material ID: {{ material.id }}</label>

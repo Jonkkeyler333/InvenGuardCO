@@ -15,10 +15,7 @@ class MaterialCreate(MaterialBase):
 
 class MaterialUpdate(BaseModel):
     name: str | None = None
-    sku: str | None = None
     unit_measure: str | None = None
-    reorder_threshold: float | None = None
-    critical_threshold: float | None = None
     image_url: str | None = None
 
 class MaterialRead(MaterialBase):

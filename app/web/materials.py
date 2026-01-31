@@ -3,8 +3,8 @@ from fastapi.responses import HTMLResponse, Response
 from app.core.templating import templates
 from app.core.dependencies import DbSession, ClerkOrHigher
 from app.core.exceptions import MaterialAlreadyExistsError, MaterialNotFoundError, InsufficientInventoryError, LockInventoryError, MaterialWithActiveInventoryError
-from app.services.material_services import create_material, inactive_material, get_all_material, inventory_movement, get_material_by_id, update_material_thresholds
-from app.schemas.material_schemas import MaterialCreate, CreateMovementBase, InventoryMovementRead, MaterialUpdateThresholds
+from app.services.material_services import create_material, inactive_material, get_all_material, inventory_movement, get_material_by_id, update_material_thresholds, update_material
+from app.schemas.material_schemas import MaterialCreate, CreateMovementBase, InventoryMovementRead, MaterialUpdateThresholds, MaterialUpdate
 from pydantic import ValidationError
 
 router = APIRouter(prefix="/materials", tags=["materials"])
@@ -194,12 +194,37 @@ def edit_material_page(request: Request,
                        id: int):
     try:
         material = get_material_by_id(session, id)
-        return templates.TemplateResponse("materials/partials/edit_material.html",
+        return templates.TemplateResponse("materials/partials/edit_materials.html",
                                           {"request": request,
                                            "material": material,
                                            "user" : user})
     except MaterialNotFoundError as e:
-        return templates.TemplateResponse("materials/partials/edit_material.html", 
+        return templates.TemplateResponse("materials/partials/edit_materials.html", 
                                           {"request": request,
                                            "error": str(e),
                                            "user" : user})
+        
+@router.post("/{id}/edit", response_class = HTMLResponse)
+def update_material_endpoint(request: Request, user: ClerkOrHigher, session: DbSession, id:int, unit_measure:str = Form(), name:str = Form(), image_url:str= Form()):
+    material_db = get_material_by_id(session, id)
+    if not material_db:
+        return templates.TemplateResponse("materials/partials/edit_materials.html", 
+                                          {"request": request,
+                                           "error": f"Material with ID {id} not found.",
+                                           "user" : user,
+                                           "material":{"unit_measure": unit_measure, "name": name, "image_url": image_url}}
+                                          )
+    try:
+        material_data = MaterialUpdate(unit_measure = unit_measure, name = name, image_url = image_url)
+        material = update_material(session,id,material_data)
+        return templates.TemplateResponse("materials/partials/edit_materials.html",
+                                          {"request": request,
+                                           "material": material,
+                                           "user" : user,
+                                           "success": f"Material {material.sku} updated successfully."})
+    except (MaterialNotFoundError, LockInventoryError) as e:
+        return templates.TemplateResponse("materials/partials/edit_materials.html", 
+                                          {"request": request,
+                                           "error": str(e),
+                                           "user" : user,
+                                           "material": material_db})
